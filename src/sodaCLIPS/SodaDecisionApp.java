@@ -40,7 +40,7 @@ public class SodaDecisionApp implements ActionListener {
 	         mre.printStackTrace();
 	         return;
 	        }
-	      JFrame jfrm = new JFrame("Soda Decision App");  
+	      JFrame jfrm = new JFrame(resources.getString("Title"));  
 	        
 	      jfrm.getContentPane().setLayout(new GridLayout(3,1));  
 	     
@@ -75,11 +75,19 @@ public class SodaDecisionApp implements ActionListener {
 	      
 	      clips.load("soda.clp");
 	      
+
+	      
 	      clips.reset();
 	      
 	      jfrm.setVisible(true);  
+	      try {
+			nextUIState();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
    }
-	private void nextUIState() throws Exception  {
+   
+   private void nextUIState() throws Exception  {
 		String evalStr = "(find-all-facts ((?f UI-state)) TRUE)";
 		
 	      
@@ -87,92 +95,122 @@ public class SodaDecisionApp implements ActionListener {
 	      
 		int tNum = pv.size();
 	      
-	      if (tNum == 0) {System.out.println("Nie ma wiecej UI");return;}
-
-	      FactAddressValue fv = (FactAddressValue) pv.get(0);
-	      
-	      relationAsserted = fv.getFactSlot("relation-asserted").toString();
-	     
-	      //Check if there is no change in the UI
-	      if (relationAsserted.contentEquals(lastRelationAsserted)) 
-	      		{
-	    	  	clips.run(1);
-	    	  	nextUIState();
-	    	  	return;
-	      		}
-	      
-	      lastRelationAsserted = relationAsserted;
-	      
-	      /*========================================*/
-	      /*    Determine the Next button states.   */
-	      /*========================================*/
-	      
-	      if (fv.getFactSlot("state").toString().equals("final"))
-	        { 
-	         nextButton.setActionCommand("Restart");
-	         nextButton.setText(resources.getString("Restart")); 
-	        }
-	      else if (fv.getFactSlot("state").toString().equals("initial"))
-	        {
-	         nextButton.setActionCommand("Next");
-	         nextButton.setText(resources.getString("Next"));
-	        }
-	      else
-	        { 
-	         nextButton.setActionCommand("Next");
-	         nextButton.setText(resources.getString("Next"));
-	        }
-	      
-	      /*=====================*/
-	      /* Set up the choices. */
-	      /*=====================*/
-	      
-	      choicesPanel.removeAll();
-	      choicesButtons = new ButtonGroup();
-	            
-	      pv = (MultifieldValue) fv.getFactSlot("valid-answers");
-	      
-	      //List theList =  pv.multifieldValue();
-	      
-	      String selected = fv.getFactSlot("response").toString();
-	     
-	      for (int i =0;i<pv.size();i++)//Iterator itr = theList.iterator(); itr.hasNext();) 
-	        {
-	         PrimitiveValue bv = (PrimitiveValue) pv.get(i);
-	         JRadioButton rButton;
-	                        
-	         if (bv.toString().equals(selected))
-	            { rButton = new JRadioButton(resources.getString(bv.toString()),true); }
-	         else
-	            { rButton = new JRadioButton(resources.getString(bv.toString()),false); }
-	                     
-	         rButton.setActionCommand(bv.toString());
-	         choicesPanel.add(rButton);
-	         choicesButtons.add(rButton);
-	        }
+	  if (tNum == 0) {System.out.println("Nie ma wiecej UI");return;}
+	
+	  FactAddressValue fv = (FactAddressValue) pv.get(0);
+	  
+	  relationAsserted = fv.getFactSlot("relation-asserted").toString();
+	 
+	  //Check if there is no change in the UI
+	  if (relationAsserted.contentEquals(lastRelationAsserted)) 
+	  {
+		  	clips.run(1);
+		  	nextUIState();
+		  	return;
+	  }
+	  
+	  lastRelationAsserted = relationAsserted;
+	  
+	  /*========================================*/
+	  /*    Determine the Next button states.   */
+	  /*========================================*/
+	  
+	  if (fv.getFactSlot("state").toString().equals("final"))
+	{ 
+	 nextButton.setActionCommand("Restart");
+	 nextButton.setText(resources.getString("Restart")); 
+	    }
+	  else if (fv.getFactSlot("state").toString().equals("initial"))
+	{
+	 nextButton.setActionCommand("Next");
+	 nextButton.setText(resources.getString("Next"));
+	    }
+	  else
+	    { 
+	     nextButton.setActionCommand("Next");
+	 nextButton.setText(resources.getString("Next"));
+	    }
+	  
+	  /*=====================*/
+	  /* Set up the choices. */
+	  /*=====================*/
+	  
+	  choicesPanel.removeAll();
+	  choicesButtons = new ButtonGroup();
 	        
-	      choicesPanel.repaint();
-	      
-	      /*====================================*/
-	      /* Set the label to the display text. */
-	      /*====================================*/
-
-	      String theText = resources.getString(((SymbolValue) fv.getFactSlot("display")).stringValue());
-	            
-	      wrapLabelText(displayLabel,theText);
-	      
+	  pv = (MultifieldValue) fv.getFactSlot("valid-answers");
+	  
+	  //List theList =  pv.multifieldValue();
+	  
+	  String selected = fv.getFactSlot("response").toString();
+	 
+	  for (int i =0;i<pv.size();i++)//Iterator itr = theList.iterator(); itr.hasNext();) 
+	    {
+	     PrimitiveValue bv = (PrimitiveValue) pv.get(i);
+	     JRadioButton rButton;
+	                    
+	     if (bv.toString().equals(selected))
+	        { rButton = new JRadioButton(resources.getString(bv.toString()),true); }
+	     else
+	        { rButton = new JRadioButton(resources.getString(bv.toString()),false); }
+	                 
+	     rButton.setActionCommand(bv.toString());
+	     choicesPanel.add(rButton);
+	     choicesButtons.add(rButton);
+	    }
+	    
+	  choicesPanel.repaint();
+	  
+	  /*====================================*/
+	  /* Set the label to the display text. */
+	  /*====================================*/
+	
+	  String theText = resources.getString(((SymbolValue) fv.getFactSlot("display")).symbolValue());
+	        
+	  wrapLabelText(displayLabel,theText);
+	  
 	} 
 
 	@Override
-	public void actionPerformed(ActionEvent ae) {
-      try 
-		{ onActionPerformed(ae); }
-      catch (Exception e)
-        { e.printStackTrace(); }
+	public void actionPerformed(ActionEvent event) {
+	      /*=========================*/
+	      /* Handle the Next button. */
+	      /*=========================*/
+	      
+	      if (event.getActionCommand().equals("Next"))
+	      {
+	    	  if (choicesButtons.getButtonCount() != 0)
+	          {
+	    		  clips.assertString("(" +relationAsserted+" "+choicesButtons.getSelection().getActionCommand()+")");
+	    		  System.out.println("(" +relationAsserted+" "+choicesButtons.getSelection().getActionCommand()+")");
+	          }
+	    	  else
+	    	  {
+	    		  clips.assertString( "(start)" );
+	    	  }
+	           
+	    	  clips.run(1);
+	    	  try {
+	    	  	nextUIState();
+	    	  }catch(Exception e) {
+	    		  e.printStackTrace();
+	    	  }
+	       }
+	       else if (event.getActionCommand().equals("Restart"))
+	       { 
+	         clips.reset(); 
+	         clips.run(1);
+	         try {
+	    	  	nextUIState();
+	    	  }catch(Exception e) {
+	    		  e.printStackTrace();
+	    	  }
+	       }
+	     }
+	     
 		
-	}  
 	
-	   public void runApp()
+	   /*public void runApp()
 	     {
 	      Runnable runThread = 
 	         new Runnable()
@@ -201,9 +239,9 @@ public class SodaDecisionApp implements ActionListener {
 	      
 	      executionThread.start();
 	     }
-
+*/
 	
-	 public void onActionPerformed(ActionEvent ae) throws Exception 
+	/* public void onActionPerformed(ActionEvent ae) throws Exception 
      { 
       if (isExecuting) return;
 
@@ -234,7 +272,7 @@ public class SodaDecisionApp implements ActionListener {
          clips.assertString("(prev " + currentID + ")");
          runApp();
         }
-     }
+     }*/
 
 	 private void wrapLabelText(
 		     JLabel label, 

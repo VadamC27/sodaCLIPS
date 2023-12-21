@@ -378,7 +378,7 @@
    (assert(brazil))
    (assert (UI-state (display brazilq )
       (relation-asserted brazil)
-      (response NO )
+      (response YES )
       (valid-answers YES NO))))
 
 

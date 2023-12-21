@@ -57,10 +57,10 @@ public class SodaDecisionApp implements ActionListener {
 
 	      JPanel buttonPanel = new JPanel(); 
 	      
-	      prevButton = new JButton("Previous");
+	    /*  prevButton = new JButton("Previous");
 	      prevButton.setActionCommand("Prev");
 	      buttonPanel.add(prevButton);
-	      prevButton.addActionListener(this);
+	      prevButton.addActionListener(this);*/
 	      
 	      nextButton = new JButton("Next");
 	      nextButton.setActionCommand("Next");
@@ -78,6 +78,7 @@ public class SodaDecisionApp implements ActionListener {
 
 	      
 	      clips.reset();
+	      clips.run(1);
 	      
 	      jfrm.setVisible(true);  
 	      try {
@@ -208,72 +209,6 @@ public class SodaDecisionApp implements ActionListener {
 	       }
 	     }
 	     
-		
-	
-	   /*public void runApp()
-	     {
-	      Runnable runThread = 
-	         new Runnable()
-	           {
-	            public void run()
-	              {
-	               clips.run();
-	               
-	               SwingUtilities.invokeLater(
-	                  new Runnable()
-	                    {
-	                     public void run()
-	                       {
-	                        try 
-	                          { nextUIState(); }
-	                        catch (Exception e)
-	                          { e.printStackTrace(); }
-	                       }
-	                    });
-	              }
-	           };
-	      
-	      isExecuting = true;
-	      
-	      executionThread = new Thread(runThread);
-	      
-	      executionThread.start();
-	     }
-*/
-	
-	/* public void onActionPerformed(ActionEvent ae) throws Exception 
-     { 
-      if (isExecuting) return;
-
-      String evalStr = "(find-all-facts ((?f state-list)) TRUE)";
-      
-      String currentID = clips.eval(evalStr).get(0).getFactSlot("current").toString();
-      
-      if (ae.getActionCommand().equals("Next"))
-        {
-         if (choicesButtons.getButtonCount() == 0)
-           { clips.assertString("(next " + currentID + ")"); }
-         else
-           {
-            clips.assertString("(next " + currentID + " " +
-                               choicesButtons.getSelection().getActionCommand() + 
-                               ")");
-           }
-           
-         runApp();
-        }
-      else if (ae.getActionCommand().equals("Restart"))
-        { 
-         clips.reset(); 
-         runApp();
-        }
-      else if (ae.getActionCommand().equals("Prev"))
-        {
-         clips.assertString("(prev " + currentID + ")");
-         runApp();
-        }
-     }*/
-
 	 private void wrapLabelText(
 		     JLabel label, 
 		     String text) 
